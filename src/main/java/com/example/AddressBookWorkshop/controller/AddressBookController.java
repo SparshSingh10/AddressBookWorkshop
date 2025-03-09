@@ -4,6 +4,7 @@ import com.example.AddressBookWorkshop.Entity.AddressBookEntry;
 import com.example.AddressBookWorkshop.Repository.AddressBookRepository;
 import com.example.AddressBookWorkshop.dto.AddressBookEntryDTO;
 import com.example.AddressBookWorkshop.dto.ResponseDTO;
+import com.example.AddressBookWorkshop.service.Iservice.IAddressBookService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,71 +15,36 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/addressbook")
 public class AddressBookController {
 
     @Autowired
-    private AddressBookRepository addressBookRepository;
+    private IAddressBookService addressBookService;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    // Convert Entity to DTO
-    private AddressBookEntryDTO convertToDTO(AddressBookEntry entry) {
-        return modelMapper.map(entry, AddressBookEntryDTO.class);
-    }
-
-    // Convert DTO to Entity
-    private AddressBookEntry convertToEntity(AddressBookEntryDTO dto) {
-        return modelMapper.map(dto, AddressBookEntry.class);
-    }
-
-    @GetMapping("addressbook")
+    @GetMapping
     public ResponseDTO<List<AddressBookEntryDTO>> getAllContacts() {
-        List<AddressBookEntry> entities = addressBookRepository.findAll();
-        List<AddressBookEntryDTO> dtoList = new ArrayList<>();
-
-        for (AddressBookEntry entity : entities) {
-            dtoList.add(convertToDTO(entity));
-        }
-
-        return new ResponseDTO<>("Success", true, dtoList);
+        return new ResponseDTO<>("Success", true,addressBookService.getAllContacts());
     }
 
-    @PostMapping("addressbook")
+    @PostMapping
     public ResponseDTO<AddressBookEntryDTO> addContact(@Valid @RequestBody AddressBookEntryDTO addressBookEntryDTO) {
-        AddressBookEntry obj = addressBookRepository.save(convertToEntity(addressBookEntryDTO));
-        return new ResponseDTO<>("Success", true, convertToDTO(obj));
+        return new ResponseDTO<>("Success", true, addressBookService.addContact(addressBookEntryDTO));
     }
 
-    @GetMapping("addressbook/{id}")
-    public ResponseDTO<AddressBookEntryDTO> getContact(@PathVariable Long id) {
-        Optional<AddressBookEntry> obj = addressBookRepository.findById(id);
-        if (obj.isPresent()) {
-            return new ResponseDTO<>("Success", true, convertToDTO(obj.get()));
-        }
-        return new ResponseDTO<>("Failed", false, null);
-    }
-
-    @PutMapping("addressbook/{id}")
+    @PutMapping("/{id}")
     public ResponseDTO<AddressBookEntryDTO> updateContact(@PathVariable Long id, @Valid @RequestBody AddressBookEntryDTO addressBookEntryDTO) {
-        Optional<AddressBookEntry> optionalEntry = addressBookRepository.findById(id);
-
-        if (optionalEntry.isPresent()) {
-            AddressBookEntry obj = optionalEntry.get();
-            obj.setName(addressBookEntryDTO.getName());
-            obj.setEmail(addressBookEntryDTO.getEmail());
-            obj.setPhoneNumber(addressBookEntryDTO.getPhoneNumber());
-            obj.setAddress(addressBookEntryDTO.getAddress());
-            addressBookRepository.save(obj);
-            return new ResponseDTO<>("Success", true, convertToDTO(obj));
-        }
-        return new ResponseDTO<>("Failed", false, null);
+        return new ResponseDTO<>("Success", true, addressBookService.updateContact(id, addressBookEntryDTO));
     }
 
-    @DeleteMapping("addressbook/{id}")
+    @GetMapping("/{id}")
+    public ResponseDTO<AddressBookEntryDTO> getContact(@PathVariable Long id) {
+        return new ResponseDTO<>("Success", true, addressBookService.getContact(id));
+    }
+    @DeleteMapping("/{id}")
     public ResponseDTO<String> deleteContact(@PathVariable Long id) {
-        addressBookRepository.deleteById(id);
-        return new ResponseDTO<>("Success", true, "Deleted");
+        return new ResponseDTO<>("Success", true, addressBookService.deleteContact(id));
     }
 }
