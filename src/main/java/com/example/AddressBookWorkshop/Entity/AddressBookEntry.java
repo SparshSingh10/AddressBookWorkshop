@@ -19,4 +19,8 @@ public class AddressBookEntry {
     private String email;
     private String phoneNumber;
     private String address;
+
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false) // Links contacts to a specific user
+//    private User user;
 }
