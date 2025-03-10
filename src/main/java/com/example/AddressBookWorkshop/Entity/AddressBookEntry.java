@@ -2,10 +2,10 @@ package com.example.AddressBookWorkshop.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Table(name = "address_book")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,7 +20,7 @@ public class AddressBookEntry {
     private String phoneNumber;
     private String address;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id", nullable = false) // Links contacts to a specific user
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)  // Lazy loading to optimize performance.
+    @JoinColumn(name = "user_id", nullable = false)  // Links contacts to a specific user
+    private User user;
 }

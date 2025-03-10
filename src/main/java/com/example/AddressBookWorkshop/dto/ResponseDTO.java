@@ -8,5 +8,5 @@ import lombok.Data;
 public class ResponseDTO<T> {
     private String message;
     private boolean success;
-    private T data;
+    private T data;  // This can be either the token (on success) or null (on failure)
 }
