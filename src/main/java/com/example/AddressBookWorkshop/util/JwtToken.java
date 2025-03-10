@@ -47,4 +47,15 @@ public class JwtToken {
             throw new RuntimeException("Invalid or expired token.");
         }
     }
+
+    public String getEmailFromToken(String token) {
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).build();
+            DecodedJWT decodedJWT = verifier.verify(token);
+            return decodedJWT.getClaim("email").asString(); // Extracts the "email" claim from the token
+        } catch (JWTVerificationException e) {
+            throw new RuntimeException("Invalid or expired token.");
+        }
+    }
+
 }

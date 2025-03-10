@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
@@ -112,6 +114,10 @@ public class AuthenticationService implements IAuthenticationService {
 
         // Log success
         logger.info("Password successfully reset for email: {}", passwordResetDTO.getEmail());
+    }
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 

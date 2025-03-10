@@ -18,7 +18,4 @@ public interface IAddressBookService {
     AddressBookEntryDTO updateContact(Long id, AddressBookEntryDTO addressBookEntryDTO);
 
     String deleteContact(Long id);
-
-    // Add the method to fetch contacts by email
-    List<AddressBookEntryDTO> getContactsByEmail(String email);
 }

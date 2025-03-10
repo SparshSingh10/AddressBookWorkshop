@@ -28,4 +28,5 @@ public class AddressBookEntryDTO {
 
     @NotBlank(message = "Address cannot be empty")
     private String address;
+    private Long userId;
 }

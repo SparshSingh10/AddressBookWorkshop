@@ -1,10 +1,13 @@
 package com.example.AddressBookWorkshop.service.Iservice;
 
+import com.example.AddressBookWorkshop.Entity.User;
 import com.example.AddressBookWorkshop.dto.LoginDTO;
 import com.example.AddressBookWorkshop.dto.PasswordResetDTO;
 import com.example.AddressBookWorkshop.dto.UserDTO;
 import com.example.AddressBookWorkshop.dto.RegisterDTO;
 import com.example.AddressBookWorkshop.exception.UserException;
+
+import java.util.Optional;
 
 public interface IAuthenticationService {
     // Register a new user
@@ -18,4 +21,6 @@ public interface IAuthenticationService {
 
     // Reset password (Now using DTO)
     void resetPassword(PasswordResetDTO passwordResetDTO) throws UserException;
+
+    Optional<User> findByEmail(String email);
 }
