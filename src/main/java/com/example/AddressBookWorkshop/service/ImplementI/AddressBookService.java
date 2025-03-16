@@ -8,8 +8,7 @@ import com.example.AddressBookWorkshop.dto.AddressBookEntryDTO;
 import com.example.AddressBookWorkshop.service.Iservice.IAddressBookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    @Cacheable(value = "contacts", key = "'all_contacts'")
+
     public List<AddressBookEntryDTO> getAllContacts() {
         List<AddressBookEntry> modeLis = addressBookRepository.findAll();
         List<AddressBookEntryDTO> dtoList = new ArrayList<>();
@@ -46,14 +45,14 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    @Cacheable(value = "contacts", key = "#id")
+
     public AddressBookEntryDTO getContact(Long id) {
         AddressBookEntry obj = addressBookRepository.findById(id).orElse(null);
         return (obj != null) ? modelMapper.map(obj, AddressBookEntryDTO.class) : null;
     }
 
     @Override
-    @CacheEvict(value = "contacts", key = "{ 'all_contacts', #addressBookEntryDTO.email }")
+
     public AddressBookEntryDTO addContact(AddressBookEntryDTO addressBookEntryDTO) {
         AddressBookEntry obj = modelMapper.map(addressBookEntryDTO, AddressBookEntry.class);
         addressBookRepository.save(obj);
@@ -62,7 +61,7 @@ public class AddressBookService implements IAddressBookService {
 
 
     @Override
-    @CacheEvict(value = "contacts", key = "#id")  // Evict cache when updating a contact
+
     public AddressBookEntryDTO updateContact(Long id, AddressBookEntryDTO addressBookEntryDTO) {
         AddressBookEntry obj = addressBookRepository.findById(id).orElse(null);
         if (obj != null) {
@@ -77,7 +76,7 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    @CacheEvict(value = "contacts", key = "#id")  // Evict cache when deleting a contact
+
     public String deleteContact(Long id) {
         if (addressBookRepository.existsById(id)) {
             addressBookRepository.deleteById(id);
@@ -87,7 +86,7 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    @Cacheable(value = "contacts", key = "#email")  // Cache the contacts by email
+
     public List<AddressBookEntryDTO> getContactsByEmail(String email) {
         // Fetch all AddressBookEntry entities from the repository
         List<AddressBookEntry> allContacts = addressBookRepository.findAll();
