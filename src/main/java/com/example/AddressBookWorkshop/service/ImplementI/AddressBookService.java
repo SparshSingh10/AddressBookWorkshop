@@ -7,8 +7,9 @@ import com.example.AddressBookWorkshop.Repository.UserRepository;
 import com.example.AddressBookWorkshop.dto.AddressBookEntryDTO;
 import com.example.AddressBookWorkshop.service.Iservice.IAddressBookService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;  // Correct caching import
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-
+    @Cacheable(value = "addressBookCache")
     public List<AddressBookEntryDTO> getAllContacts() {
         List<AddressBookEntry> modeLis = addressBookRepository.findAll();
         List<AddressBookEntryDTO> dtoList = new ArrayList<>();
@@ -45,23 +46,20 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-
+    @Cacheable(value = "addressBookCache", key = "#id")
     public AddressBookEntryDTO getContact(Long id) {
         AddressBookEntry obj = addressBookRepository.findById(id).orElse(null);
         return (obj != null) ? modelMapper.map(obj, AddressBookEntryDTO.class) : null;
     }
 
     @Override
-
     public AddressBookEntryDTO addContact(AddressBookEntryDTO addressBookEntryDTO) {
         AddressBookEntry obj = modelMapper.map(addressBookEntryDTO, AddressBookEntry.class);
         addressBookRepository.save(obj);
         return modelMapper.map(obj, AddressBookEntryDTO.class);
     }
 
-
     @Override
-
     public AddressBookEntryDTO updateContact(Long id, AddressBookEntryDTO addressBookEntryDTO) {
         AddressBookEntry obj = addressBookRepository.findById(id).orElse(null);
         if (obj != null) {
@@ -76,7 +74,6 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-
     public String deleteContact(Long id) {
         if (addressBookRepository.existsById(id)) {
             addressBookRepository.deleteById(id);
@@ -86,7 +83,6 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-
     public List<AddressBookEntryDTO> getContactsByEmail(String email) {
         // Fetch all AddressBookEntry entities from the repository
         List<AddressBookEntry> allContacts = addressBookRepository.findAll();

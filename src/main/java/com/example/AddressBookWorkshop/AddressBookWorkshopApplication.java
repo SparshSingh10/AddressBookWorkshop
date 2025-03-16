@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-
+@EnableCaching
 
 public class AddressBookWorkshopApplication {
 
