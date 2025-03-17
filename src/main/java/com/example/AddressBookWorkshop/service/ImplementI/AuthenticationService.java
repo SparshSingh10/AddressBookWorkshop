@@ -85,6 +85,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         // Generate JWT token
         String token = jwtToken.createToken(user.getEmail());
+        System.out.println("token is = "+token);
 
         // Send login success message to RabbitMQ
         String customMessage = "LOGIN|" + user.getEmail() + "|" + user.getName();
