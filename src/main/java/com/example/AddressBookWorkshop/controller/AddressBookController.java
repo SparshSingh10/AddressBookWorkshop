@@ -31,12 +31,26 @@ public class AddressBookController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping  // ✅ Remove the extra "/" here
+    @Autowired
+    private JwtToken jwtToken;
+
+
+    @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ResponseDTO<List<AddressBookEntryDTO>>> getContactsByEmail(@RequestParam String email) {
-        List<AddressBookEntryDTO> contacts = addressBookService.getContactsByEmail(email);
+    public ResponseEntity<ResponseDTO<List<AddressBookEntryDTO>>> getContactsByEmail(
+            @RequestHeader("Authorization") String token) {
+
+        // Extract email from the JWT token
+        String userEmail = jwtToken.getEmailFromToken(token.replace("Bearer ", ""));
+
+        if (userEmail == null) {
+            return new ResponseEntity<>(new ResponseDTO<>("Invalid or expired token", false, null), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<AddressBookEntryDTO> contacts = addressBookService.getContactsByEmail(userEmail);
         return ResponseEntity.ok(new ResponseDTO<>("Success", true, contacts));
     }
+
 
 
     // Add a new contact
@@ -47,39 +61,64 @@ public class AddressBookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<AddressBookEntryDTO>> updateContact(@PathVariable Long id,
-                                                                          @Valid @RequestBody AddressBookEntryDTO addressBookEntryDTO) {
-        AddressBookEntryDTO existingContact = addressBookService.getContact(id);
+    public ResponseEntity<ResponseDTO<AddressBookEntryDTO>> updateContact(
+            @PathVariable Long id,
+            @Valid @RequestBody AddressBookEntryDTO addressBookEntryDTO,
+            @RequestHeader("Authorization") String token) {
 
+        // Remove "Bearer " prefix and extract email from the JWT token
+        String userEmail = jwtToken.getEmailFromToken(token.replace("Bearer ", ""));
+
+        if (userEmail == null) {
+            return new ResponseEntity<>(new ResponseDTO<>("Invalid or expired token", false, null), HttpStatus.UNAUTHORIZED);
+        }
+
+        // Get the existing contact
+        AddressBookEntryDTO existingContact = addressBookService.getContact(id);
         if (existingContact == null) {
             return new ResponseEntity<>(new ResponseDTO<>("Contact not found", false, null), HttpStatus.NOT_FOUND);
         }
 
-        if (!existingContact.getEmail().equals(addressBookEntryDTO.getEmail())) {
+        // Validate if the user is authorized to update this contact
+        if (!existingContact.getEmail().equals(userEmail)) {
             return new ResponseEntity<>(new ResponseDTO<>("Unauthorized access", false, null), HttpStatus.FORBIDDEN);
         }
 
+        // Perform update
         AddressBookEntryDTO updatedContact = addressBookService.updateContact(id, addressBookEntryDTO);
         return ResponseEntity.ok(new ResponseDTO<>("Success", true, updatedContact));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> deleteContact(@PathVariable Long id, @RequestBody UserEmailDTO userEmailDTO) {
-        String email = userEmailDTO.getEmail();
 
-        User user = authenticationService.findByEmail(email)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO<String>> deleteContact(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
+        // Extract email from JWT token
+        String userEmail = jwtToken.getEmailFromToken(token.replace("Bearer ", ""));
+
+        if (userEmail == null) {
+            return new ResponseEntity<>(new ResponseDTO<>("Invalid or expired token", false, null), HttpStatus.UNAUTHORIZED);
+        }
+
+        // Find user by email
+        User user = authenticationService.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        // Get the contact by ID
         AddressBookEntryDTO contact = addressBookService.getContact(id);
 
         if (contact == null) {
             return new ResponseEntity<>(new ResponseDTO<>("Contact not found", false, null), HttpStatus.NOT_FOUND);
         }
 
-        if (!contact.getEmail().equals(email) && !"ADMIN".equals(user.getRole())) {
+        // Validate if the user is authorized to delete this contact
+        if (!contact.getEmail().equals(userEmail) && !"ADMIN".equals(user.getRole())) {
             return new ResponseEntity<>(new ResponseDTO<>("Unauthorized access", false, null), HttpStatus.FORBIDDEN);
         }
 
+        // Perform deletion
         addressBookService.deleteContact(id);
         return ResponseEntity.ok(new ResponseDTO<>("Contact deleted successfully", true, "Deleted"));
     }

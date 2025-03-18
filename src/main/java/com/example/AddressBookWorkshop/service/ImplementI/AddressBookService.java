@@ -75,12 +75,13 @@ public class AddressBookService implements IAddressBookService {
 
     @Override
     public String deleteContact(Long id) {
-        if (addressBookRepository.existsById(id)) {
-            addressBookRepository.deleteById(id);
-            return "Contact deleted successfully";
+        if (!addressBookRepository.existsById(id)) {
+            return "Contact not found";
         }
-        return "Contact not found";
+        addressBookRepository.deleteById(id);
+        return "Contact deleted successfully";
     }
+
 
     @Override
     public List<AddressBookEntryDTO> getContactsByEmail(String email) {
