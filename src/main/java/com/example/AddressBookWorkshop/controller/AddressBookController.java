@@ -138,4 +138,34 @@ public class AddressBookController {
         }
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ResponseDTO<AddressBookEntryDTO>> getContactById(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
+        // Extract email from the JWT token
+        String userEmail = jwtToken.getEmailFromToken(token.replace("Bearer ", ""));
+
+        if (userEmail == null) {
+            return new ResponseEntity<>(new ResponseDTO<>("Invalid or expired token", false, null), HttpStatus.UNAUTHORIZED);
+        }
+
+        // Get the contact
+        AddressBookEntryDTO contact = addressBookService.getContact(id);
+
+        if (contact == null) {
+            return new ResponseEntity<>(new ResponseDTO<>("Contact not found", false, null), HttpStatus.NOT_FOUND);
+        }
+
+        // Check if the user is authorized to view this contact
+        if (!contact.getEmail().equals(userEmail)) {
+            return new ResponseEntity<>(new ResponseDTO<>("Unauthorized access", false, null), HttpStatus.FORBIDDEN);
+        }
+
+        return ResponseEntity.ok(new ResponseDTO<>("Success", true, contact));
+    }
+
+
+
 }
