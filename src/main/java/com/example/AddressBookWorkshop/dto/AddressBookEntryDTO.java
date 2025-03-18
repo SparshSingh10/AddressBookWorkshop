@@ -6,13 +6,17 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddressBookEntryDTO {
+public class AddressBookEntryDTO implements Serializable {
 
-    private Long id;  // ID is usually auto-generated, so no validation needed
+    private static final long serialVersionUID = 1L;  // Required for serialization
+
+    private Long id;
 
     @NotBlank(message = "Name cannot be empty")
     @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
@@ -28,5 +32,6 @@ public class AddressBookEntryDTO {
 
     @NotBlank(message = "Address cannot be empty")
     private String address;
+
     private Long userId;
 }
