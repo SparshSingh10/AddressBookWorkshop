@@ -1,4 +1,4 @@
-package com.example.AddressBookWorkshop.service.Iservice;
+package com.example.AddressBookWorkshop.interfaces;
 
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;

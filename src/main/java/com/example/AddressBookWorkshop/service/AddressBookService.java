@@ -1,11 +1,11 @@
-package com.example.AddressBookWorkshop.service.ImplementI;
+package com.example.AddressBookWorkshop.service;
 
 import com.example.AddressBookWorkshop.Entity.AddressBookEntry;
 import com.example.AddressBookWorkshop.Entity.User;
 import com.example.AddressBookWorkshop.Repository.AddressBookRepository;
 import com.example.AddressBookWorkshop.Repository.UserRepository;
 import com.example.AddressBookWorkshop.dto.AddressBookEntryDTO;
-import com.example.AddressBookWorkshop.service.Iservice.IAddressBookService;
+import com.example.AddressBookWorkshop.interfaces.IAddressBookService;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;

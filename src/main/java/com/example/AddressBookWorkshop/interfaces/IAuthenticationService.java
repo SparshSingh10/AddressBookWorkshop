@@ -1,4 +1,4 @@
-package com.example.AddressBookWorkshop.service.Iservice;
+package com.example.AddressBookWorkshop.interfaces;
 
 import com.example.AddressBookWorkshop.Entity.User;
 import com.example.AddressBookWorkshop.dto.LoginDTO;

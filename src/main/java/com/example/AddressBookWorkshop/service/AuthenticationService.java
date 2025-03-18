@@ -1,4 +1,4 @@
-package com.example.AddressBookWorkshop.service.ImplementI;
+package com.example.AddressBookWorkshop.service;
 
 import com.example.AddressBookWorkshop.Entity.User;
 import com.example.AddressBookWorkshop.Repository.UserRepository;
@@ -7,9 +7,7 @@ import com.example.AddressBookWorkshop.dto.PasswordResetDTO;
 import com.example.AddressBookWorkshop.dto.UserDTO;
 import com.example.AddressBookWorkshop.dto.RegisterDTO;
 import com.example.AddressBookWorkshop.exception.UserException;
-import com.example.AddressBookWorkshop.service.EmailSenderService;
-import com.example.AddressBookWorkshop.service.Iservice.IAuthenticationService;
-import com.example.AddressBookWorkshop.service.MessageProducer;
+import com.example.AddressBookWorkshop.interfaces.IAuthenticationService;
 import com.example.AddressBookWorkshop.util.JwtToken;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;

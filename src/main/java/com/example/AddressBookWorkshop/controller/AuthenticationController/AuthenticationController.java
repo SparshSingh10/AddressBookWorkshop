@@ -2,7 +2,7 @@ package com.example.AddressBookWorkshop.controller.AuthenticationController;
 
 import com.example.AddressBookWorkshop.dto.*;
 import com.example.AddressBookWorkshop.exception.UserException;
-import com.example.AddressBookWorkshop.service.Iservice.IAuthenticationService;
+import com.example.AddressBookWorkshop.interfaces.IAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
