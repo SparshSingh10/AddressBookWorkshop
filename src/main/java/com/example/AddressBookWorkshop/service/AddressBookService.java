@@ -36,7 +36,7 @@ public class AddressBookService implements IAddressBookService {
     }
 
     @Override
-    @Cacheable(value = "addressBookCache")
+    @Cacheable(value = "allAddressBookCache", key = "'allContacts'")
     public List<AddressBookEntryDTO> getAllContacts() {
         log.info("Fetching all contacts");
         List<AddressBookEntry> modeLis = addressBookRepository.findAll();
@@ -47,6 +47,9 @@ public class AddressBookService implements IAddressBookService {
         }
         return dtoList;
     }
+
+
+
 
     @Override
     @Cacheable(value = "addressBookCache", key = "#id")
